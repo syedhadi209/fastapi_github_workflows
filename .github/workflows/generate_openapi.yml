@@ -34,22 +34,27 @@ jobs:
         id: check_changes
         run: |
           if git diff --exit-code; then
-              echo "No changes detected."
+            echo "No changes detected."
           else
-              echo "Files have changed."
-              # Add your logic here to update the existing openapi.json file
-              git config user.name "${{ github.actor }}"
-              git config user.email "${{ github.actor }}@users.noreply.github.com"
-              git checkout HEAD openapi.json  # Ensure we are working with the latest committed version
-              # Add any necessary steps to update the content of openapi.json
-              # For example, if you have a command to regenerate it, use that command
-              python -c "from src.main import save_openapi_to_file; save_openapi_to_file()"
-              git add openapi.json
-              git commit -m "Update OpenAPI"
-              
-              # Pull changes from the remote branch before pushing
-              git pull origin ${{ github.head_ref }}
-              
-              # Push the changes to the branch associated with the pull request
-              git push origin HEAD:${{ github.head_ref }}
+            echo "Files have changed."
+            # Add your logic here to update the existing openapi.json file
+            git config user.name "${{ github.actor }}"
+            git config user.email "${{ github.actor }}@users.noreply.github.com"
+            git checkout HEAD openapi.json  # Ensure we are working with the latest committed version
+            # Add any necessary steps to update the content of openapi.json
+            # For example, if you have a command to regenerate it, use that command
+            python -c "from src.main import save_openapi_to_file; save_openapi_to_file()"
+            git add openapi.json
+            git commit -m "Update OpenAPI"
+            
+            # Update the openapi.json file in the pull request using GitHub API
+            gh pr checkout ${{ github.event.number }}
+            gh pr diff > pr_diff.patch
+            git apply --check pr_diff.patch
+            git apply pr_diff.patch
+            
+            # Commit the changes directly to the pull request branch
+            git add openapi.json
+            git commit --amend --no-edit
+            git push origin HEAD:${{ github.head_ref }}
           fi
