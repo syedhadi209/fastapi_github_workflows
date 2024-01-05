@@ -34,6 +34,7 @@ jobs:
           if ! git diff --exit-code origin/main:openapi.json openapi.json; then
             echo "Changes detected in openapi.json"
             echo "::set-output name=changes_detected::true"
+            git diff origin/main:openapi.json openapi.json
           else
             echo "No changes detected in openapi.json"
             echo "::set-output name=changes_detected::false"
