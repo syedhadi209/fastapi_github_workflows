@@ -37,7 +37,7 @@ jobs:
 
       - name: if there is no changes
         if: steps.check_changes.outputs.return-code == '0'
-        run: echo "no changes detected"
+        run: echo "no changes detected ${{ github.head_ref }}"
 
       - name: if changes are detected
         if: steps.check_changes.outputs.return-code != '0'
