@@ -30,14 +30,29 @@ jobs:
       - name: Compare OpenAPI files
         id: compare_openapi
         run: |
-          # Compare the openapi.json in the main branch with the one in the pull request
-          if ! git diff --exit-code origin/main:openapi.json openapi.json; then
-            echo "Changes detected in openapi.json"
-            echo "::set-output name=changes_detected::true"
-          else
+          pr_openapi_content=$(cat openapi.json)
+          main_openapi_content=$(curl -s -H "Accept: application/vnd.github.v3.raw" "https://raw.githubusercontent.com/${{ github.repository }}/main/openapi.json")
+
+          if [ "$pr_openapi_content" == "$main_openapi_content" ]; then
             echo "No changes detected in openapi.json"
             echo "::set-output name=changes_detected::false"
+          else
+            echo "Changes detected in openapi.json:"
+            echo "$pr_openapi_content"  # Print PR version
+            echo "-----"
+            echo "$main_openapi_content"  # Print main branch version
+            echo "::set-output name=changes_detected::true"
+            # Perform actions based on detected changes
           fi
+        #   # Compare the openapi.json in the main branch with the one in the pull request
+        #   if ! git diff --exit-code origin/main:openapi.json openapi.json; then
+        #     echo "Changes detected in openapi.json"
+        #     echo "::set-output name=changes_detected::true"
+        #     git diff --name-only origin/main/openapi.json origin/${GITHUB_HEAD_REF}/openapi.json
+        #   else
+        #     echo "No changes detected in openapi.json"
+        #     echo "::set-output name=changes_detected::false"
+        #   fi
 
       - name: Comment PR
         if: steps.compare_openapi.outputs.changes_detected == 'true'
