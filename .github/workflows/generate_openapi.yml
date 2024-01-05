@@ -33,4 +33,18 @@ jobs:
       - name: Check for Changes
         id: check_changes
         run: |
-          git diff --exit-code || echo "Files have changed"
+          if git diff --exit-code; then
+          echo "No changes detected."
+          else
+              echo "Files have changed."
+              # Add your logic here to update the existing openapi.json file
+              git config user.name "${{ github.actor }}"
+              git config user.email "${{ github.actor }}@users.noreply.github.com"
+              git checkout HEAD openapi.json  # Ensure we are working with the latest committed version
+              # Add any necessary steps to update the content of openapi.json
+              # For example, if you have a command to regenerate it, use that command
+              python -c "from src.main import save_openapi_to_file; save_openapi_to_file()"
+              git add openapi.json
+              git commit -m "Update OpenAPI"
+              git push origin HEAD:${{ github.head_ref }}
+          fi
