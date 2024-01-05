@@ -35,11 +35,13 @@ jobs:
 
           if [ "$pr_openapi_content" == "$main_openapi_content" ]; then
             echo "No changes detected in openapi.json"
+            echo "::set-output name=changes_detected::false"
           else
             echo "Changes detected in openapi.json:"
             echo "$pr_openapi_content"  # Print PR version
             echo "-----"
             echo "$main_openapi_content"  # Print main branch version
+            echo "::set-output name=changes_detected::true"
             # Perform actions based on detected changes
           fi
         #   # Compare the openapi.json in the main branch with the one in the pull request
