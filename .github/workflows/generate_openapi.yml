@@ -34,13 +34,3 @@ jobs:
         id: check_changes
         run: |
           git diff --exit-code || echo "Files have changed"
-
-      - name: Commit and Push Changes
-        if: steps.check_changes.outputs.return-code == '0'
-        run: |
-          echo "no changes"
-
-      - name: else step
-        if: steps.check_changes.outputs.return-code != '0'
-        run: |
-          echo "changes detected"
