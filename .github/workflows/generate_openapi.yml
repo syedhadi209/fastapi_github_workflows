@@ -3,7 +3,7 @@ name: Generate and Update OpenAPI
 on:
   pull_request:
     branches:
-      - develop
+      - main
 
   push:
     branches:
