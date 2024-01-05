@@ -33,12 +33,11 @@ jobs:
       - name: Check for Changes in openapi.json
         id: check_changes
         run: |
-          if [[ $(git diff --name-only ${{ github.event.before }} ${{ github.sha }}) == *"openapi.json"* ]]; then
-            echo "Changes detected in openapi.json"
-            exit 0
+          if [[ $(git diff --name-only HEAD^ ${{ github.sha }}) == *"openapi.json"* ]]; then
+          echo "Changes detected in openapi.json"
           else
-            echo "No changes detected in openapi.json"
-            exit 1  # Exit with a non-zero code to indicate no changes
+              echo "No changes detected in openapi.json"
+              exit 1  # Exit with a non-zero code to indicate no changes
           fi
 
       - name: Commit and Push Changes
