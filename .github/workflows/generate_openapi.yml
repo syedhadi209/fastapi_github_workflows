@@ -41,4 +41,8 @@ jobs:
 
       - name: if changes are detected
         if: steps.check_changes.outputs.return-code != '0'
-        run: echo "changes detected"
+        run: |
+          echo "changes detected"
+          git add openapi.json
+          git commit -m "updated openapi.json file"
+          git push origin ${{ github.head_ref }}
