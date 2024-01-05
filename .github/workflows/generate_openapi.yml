@@ -34,7 +34,7 @@ jobs:
         id: check_changes
         run: |
           if git diff --exit-code; then
-          echo "No changes detected."
+              echo "No changes detected."
           else
               echo "Files have changed."
               # Add your logic here to update the existing openapi.json file
@@ -46,5 +46,10 @@ jobs:
               python -c "from src.main import save_openapi_to_file; save_openapi_to_file()"
               git add openapi.json
               git commit -m "Update OpenAPI"
+              
+              # Pull changes from the remote branch before pushing
+              git pull origin ${{ github.head_ref }}
+              
+              # Push the changes to the branch associated with the pull request
               git push origin HEAD:${{ github.head_ref }}
           fi
