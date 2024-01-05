@@ -38,7 +38,7 @@ jobs:
       #           exit 0
       #       fi
       - name: Comment PR
-        if: steps.save_openapi.outputs.changes_detected == '0'
+        if: steps.save_openapi.outputs.changes_detected == '1'
         run: echo "here 1"
         # uses: thollander/actions-comment-pull-request@v2
         # with:
