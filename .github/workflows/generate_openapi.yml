@@ -30,41 +30,13 @@ jobs:
         run: |
           python -c "from src.main import save_openapi_to_file; save_openapi_to_file()"
 
-      - name: Check for Changes in openapi.json
-        id: check_changes
+      - name: Compare OpenAPI files
+        id: compare_openapi
         run: |
-          # Clone the repository to a temporary directory
-          git clone --depth=1 https://github.com/${{ github.repository }} /tmp/repo
-          cd /tmp/repo
-
-          # Check if the parent commit exists (main branch)
-          if git rev-parse --verify main > /dev/null 2>&1; then
-            # Checkout the main branch
-            git checkout main
-
-            # Check if openapi.json exists in the main branch
-            if git show main:openapi.json > /dev/null 2>&1; then
-              # Compare the openapi.json in the main branch with the one in the pull request
-              if ! git diff --exit-code main:openapi.json ${{ github.workspace }}/openapi.json; then
-                echo "Changes detected in openapi.json"
-
-                # Get the pull request number
-                pr_number=$(curl -s "https://api.github.com/repos/${{ github.repository }}/pulls" | jq -r ".[] | select(.head.sha == \"${{ github.sha }}\") | .number")
-
-                # Create a comment on the pull request
-                comment_body="Changes detected in the \`openapi.json\` file."
-                curl -s -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
-                     -X POST -d "{\"body\":\"$comment_body\"}" \
-                     "https://api.github.com/repos/${{ github.repository }}/issues/${pr_number}/comments"
-              else
-                echo "No changes detected in openapi.json"
-                exit 1  # Exit with a non-zero code to indicate no changes
-              fi
-            else
-              echo "openapi.json not found in main branch"
-              exit 1  # Exit with a non-zero code to indicate no changes
-            fi
+          # Compare the openapi.json in the main branch with the one in the pull request
+          if ! git diff --exit-code origin/main:openapi.json openapi.json; then
+            echo "Changes detected in openapi.json"
+            echo "::set-output name=changes_detected::true"
           else
-            echo "Main branch not found"
-            exit 1  # Exit with a non-zero code to indicate no changes
+            echo "No changes detected in openapi.json"
           fi
