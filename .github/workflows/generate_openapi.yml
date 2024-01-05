@@ -30,7 +30,13 @@ jobs:
       - name: Run save_openapi_to_file
         id: save_openapi
         run: |
-          python -c "from src.main import save_openapi_to_file; import sys; sys.exit(not save_openapi_to_file())"
+          if python -c "from src.main import save_openapi_to_file; import sys; sys.exit(not save_openapi_to_file())"; then
+              echo "Changes detected"
+              exit 0
+          else
+              echo "No changes detected"
+              exit 1
+          fi
 
       - name: Comment PR
         if: steps.save_openapi.outputs.changes_detected == 'true'
