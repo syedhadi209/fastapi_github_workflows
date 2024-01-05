@@ -46,3 +46,6 @@ jobs:
           message: |
             Chnages detected in openapi.json
           pr_number: ${{ github.event.number }}
+
+      - name: test
+        run: echo "testing"
