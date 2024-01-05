@@ -56,4 +56,5 @@ jobs:
         with:
           message: |
             Hello world ! :wave:
-          pr_number: 9
+          pr_number: ${{ github.event.number }}
+          reactions: eyes, rocket
