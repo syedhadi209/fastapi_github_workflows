@@ -31,23 +31,24 @@ jobs:
       - name: Run save_openapi_to_file
         run: |
           python -c "from src.main import save_openapi_to_file; save_openapi_to_file()"
-
+  
       - name: Check for Changes
         id: check_changes
         run: |
           git diff --exit-code || echo "Files have changed"
-
+  
       - name: Commit and Push Changes
-        if: steps.check_changes.outputs.return-code == '0' # Only run if there are changes
+        if: steps.check_changes.outputs.return-code == '0'
         run: |
           git config user.name "${{ github.actor }}"
           git config user.email "${{ github.actor }}@users.noreply.github.com"
+          git remote set-url origin "https://${{ secrets.PAT }}@github.com/${{ github.repository }}.git"
           git add openapi.json
           git commit -m "Update OpenAPI"
           git push
-
+  
       - name: Comment on PR
-        if: steps.check_changes.outputs.return-code == '0' # Only run if there are changes
+        if: steps.check_changes.outputs.return-code == '0'
         uses: actions/github-script@v7
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
