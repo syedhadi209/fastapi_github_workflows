@@ -26,7 +26,7 @@ jobs:
       - name: Run save_openapi_to_file
         id: save_openapi
         run: |
-          if python -c "from sripts.generate_openapi import get_openapi_status; import sys; sys.exit(not get_openapi_status())"; then
+          if python -c "from sripts.generate_openapi import get_openapi_status; get_openapi_status()"; then
               echo "Changes detected"
               exit 1
           else
