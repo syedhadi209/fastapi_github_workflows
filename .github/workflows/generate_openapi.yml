@@ -24,10 +24,6 @@ jobs:
           pip install -r requirements.txt  # Adjust the path if needed
 
       - name: Run save_openapi_to_file
-        run: |
-          python -c "from src.main import save_openapi_to_file; save_openapi_to_file()"
-
-      - name: Run save_openapi_to_file
         id: save_openapi
         run: |
           if python -c "from sripts.generate_openapi import get_openapi_status; import sys; sys.exit(not get_openapi_status())"; then
