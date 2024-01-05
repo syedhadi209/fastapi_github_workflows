@@ -30,10 +30,10 @@ jobs:
         run: |
           python -c "from src.main import save_openapi_to_file; save_openapi_to_file()"
 
-      - name: Check for Changes
+      - name: Check for Changes in openapi.json
         id: check_changes
         run: |
-          git diff --exit-code || echo "Files have changed"
+          git diff --exit-code -- openapi.json || echo "Changes detected in openapi.json"
 
       - name: Commit and Push Changes
         if: steps.check_changes.outputs.return-code != '0'
