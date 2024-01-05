@@ -24,24 +24,26 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt  # Adjust the path if needed
 
-      - name: Run save_openapi_to_file
-        run: |
-          python -c "from src.main import save_openapi_to_file; save_openapi_to_file()"
+          - name: Run save_openapi_to_file
+          run: |
+            python -c "from src.main import save_openapi_to_file; save_openapi_to_file()"
 
       - name: Check for Changes
         id: check_changes
         run: |
           git diff --exit-code || echo "Files have changed"
 
-      - name: Commit and Push Changes
+      - name: Create and Switch to a New Branch
         if: steps.check_changes.outputs.return-code == '0'
         run: |
-          git config user.name "${{ github.actor }}"
-          git config user.email "${{ github.actor }}@users.noreply.github.com"
-          git remote set-url origin "https://${{ secrets.PAT }}@github.com/${{ github.repository }}.git"
+          git checkout -b update-openapi
           git add openapi.json
           git commit -m "Update OpenAPI"
-          git push
+
+      - name: Push Changes
+        if: steps.check_changes.outputs.return-code == '0'
+        run: |
+          git push origin update-openapi
 
       - name: Comment on PR
         if: steps.check_changes.outputs.return-code == '0'
@@ -51,9 +53,9 @@ jobs:
           script: |
             const body = 'The OpenAPI documentation has been updated. Please review the changes.';
             const comment = await github.issues.createComment({
-              issue_number: context.issue.number,
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              body: body
+            issue_number: context.issue.number,
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            body: body
             });
             core.setOutput('comment-id', comment.data.id)
