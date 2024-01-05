@@ -30,3 +30,4 @@ def save_openapi_to_file():
     with open("openapi.json", "w", encoding="utf-8") as file:
         json.dump(openapi_content, file, ensure_ascii=False, indent=2)
 
+print("hello")
