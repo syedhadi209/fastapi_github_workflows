@@ -33,11 +33,15 @@ jobs:
       - name: Check for Changes in openapi.json
         id: check_changes
         run: |
-          if [[ $(git diff --name-only HEAD^ ${{ github.sha }}) == *"openapi.json"* ]]; then
-          echo "Changes detected in openapi.json"
+          # Get the commit SHA of the parent commit
+          parent_commit=$(git rev-parse HEAD^)
+
+          # Check for changes in openapi.json between the parent commit and the current commit
+          if [[ $(git diff --name-only $parent_commit ${{ github.sha }}) == *"openapi.json"* ]]; then
+            echo "Changes detected in openapi.json"
           else
-              echo "No changes detected in openapi.json"
-              exit 1  # Exit with a non-zero code to indicate no changes
+            echo "No changes detected in openapi.json"
+            exit 1  # Exit with a non-zero code to indicate no changes
           fi
 
       - name: Commit and Push Changes
