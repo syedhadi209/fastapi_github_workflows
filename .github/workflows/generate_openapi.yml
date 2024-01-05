@@ -34,7 +34,7 @@ jobs:
         id: check_changes
         run: |
           # Get the commit SHA of the parent commit
-          parent_commit=$(git rev-parse HEAD^)
+          parent_commit=$(git rev-parse HEAD~1)
 
           # Check for changes in openapi.json between the parent commit and the current commit
           if [[ $(git diff --name-only $parent_commit ${{ github.sha }}) == *"openapi.json"* ]]; then
