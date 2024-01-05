@@ -5,9 +5,13 @@ on:
     branches:
       - main
 
+  push:
+    branches:
+      - main
+
 jobs:
   generate_openapi:
-    runs-on: ubuntu
+    runs-on: ubuntu-latest
 
     steps:
       - name: Checkout Repository
