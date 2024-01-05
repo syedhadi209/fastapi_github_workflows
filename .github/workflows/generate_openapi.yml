@@ -26,6 +26,10 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt  # Adjust the path if needed
 
+      - name: Run save_openapi_to_file
+        run: |
+          python -c "from src.main import save_openapi_to_file; save_openapi_to_file()"
+
       - name: Compare OpenAPI files
         id: compare_openapi
         run: |
