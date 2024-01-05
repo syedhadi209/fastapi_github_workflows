@@ -1,5 +1,6 @@
 from fastapi.openapi.utils import get_openapi
 import json
+from src.main import app
 
 def save_openapi_to_file():
     # Check if openapi.json exists
