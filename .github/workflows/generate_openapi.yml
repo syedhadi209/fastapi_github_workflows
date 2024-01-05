@@ -48,13 +48,16 @@ jobs:
             git commit -m "Update OpenAPI"
             
             # Update the openapi.json file in the pull request using GitHub API
-            gh pr checkout ${{ github.event.number }}
-            gh pr diff > pr_diff.patch
-            git apply --check pr_diff.patch
-            git apply pr_diff.patch
+            git config --global user.email "${{ github.actor }}@users.noreply.github.com"
+            git config --global user.name "${{ github.actor }}"
+            git remote add pr_origin "https://github.com/${{ github.repository }}.git"
+            git fetch pr_origin pull/${{ github.event.number }}/head:pr_branch
+            git checkout pr_branch
+            git apply --check ${{ github.workspace }}/pr_diff.patch
+            git apply ${{ github.workspace }}/pr_diff.patch
             
             # Commit the changes directly to the pull request branch
             git add openapi.json
             git commit --amend --no-edit
-            git push origin HEAD:${{ github.head_ref }}
+            git push pr_origin HEAD:${{ github.event.number }}/head
           fi
