@@ -25,22 +25,26 @@ jobs:
 
       - name: Run save_openapi_to_file
         id: save_openapi
-        run: |
-          if python -c "from sripts.generate_openapi import get_openapi_status; get_openapi_status()"; then
-              echo "Changes detected"
-              exit 1
-          else
-              echo "No changes detected"
-              exit 0
-          fi
+        run: python scripts/generate_openapi.py
 
+      #   - name: Run save_openapi_to_file
+      #     id: save_openapi
+      #     run: |
+      #       if python -c "from sripts.generate_openapi import get_openapi_status; get_openapi_status()"; then
+      #           echo "Changes detected"
+      #           exit 1
+      #       else
+      #           echo "No changes detected"
+      #           exit 0
+      #       fi
       - name: Comment PR
-        if: steps.save_openapi.outputs.changes_detected == 'true'
-        uses: thollander/actions-comment-pull-request@v2
-        with:
-          message: |
-            Chnages detected in openapi.json
-          pr_number: ${{ github.event.number }}
+        if: steps.save_openapi.outputs.changes_detected == '1'
+        run: echo "here 1"
+        # uses: thollander/actions-comment-pull-request@v2
+        # with:
+        #   message: |
+        #     Chnages detected in openapi.json
+        #   pr_number: ${{ github.event.number }}
 
       - name: test
         run: echo "testing"
