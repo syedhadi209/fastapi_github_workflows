@@ -3,7 +3,7 @@ name: Generate and Update OpenAPI
 on:
   pull_request:
     branches:
-      - main
+      - develop
 
   push:
     branches:
@@ -15,13 +15,13 @@ jobs:
 
     steps:
       - name: Checkout Repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v2
 
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: "3.10"
-          cache: "pip"
+          python-version: “3.10”
+          cache: “pip”
 
       - name: Install Dependencies
         run: |
