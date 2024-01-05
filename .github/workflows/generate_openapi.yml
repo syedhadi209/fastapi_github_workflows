@@ -3,7 +3,7 @@ name: Generate and Update OpenAPI
 on:
   pull_request:
     branches:
-      - '*'
+      - "*"
   push:
     branches:
       - main
@@ -13,26 +13,34 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout Repository
-      uses: actions/checkout@v3
+      - name: Checkout Repository
+        uses: actions/checkout@v3
 
-    - name: Set up Python
-      uses: actions/setup-python@v3
-      with:
-        python-version: "3.10"
+      - name: Set up Python
+        uses: actions/setup-python@v3
+        with:
+          python-version: "3.10"
 
-    - name: Install Dependencies
-      run: |
-        python -m pip install --upgrade pip
-        pip install -r requirements.txt  # Adjust the path if needed
+      - name: Install Dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt  # Adjust the path if needed
 
-    - name: Run save_openapi_to_file
-      run: |
-        python -c "from src.main import save_openapi_to_file; save_openapi_to_file()"
+      - name: Run save_openapi_to_file
+        run: |
+          python -c "from src.main import save_openapi_to_file; save_openapi_to_file()"
 
-    - name: Check for Changes
-      id: check_changes
-      run: |
-        git diff --exit-code || echo "Files have changed"
+      - name: Check for Changes
+        id: check_changes
+        run: |
+          git diff --exit-code || echo "Files have changed"
 
-    
+      - name: Commit and Push Changes
+        if: steps.check_changes.outputs.return-code == '0'
+        run: |
+          echo "no changes"
+
+      - name: else step
+        if: steps.check_changes.outputs.return-code != '0'
+        run: |
+          echo "changes detected"
