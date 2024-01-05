@@ -25,7 +25,7 @@ jobs:
 
       - name: Run save_openapi_to_file
         id: save_openapi
-        run: python scripts/generate_openapi.py
+        run: python src/main.py get_openapi_status
 
       #   - name: Run save_openapi_to_file
       #     id: save_openapi
