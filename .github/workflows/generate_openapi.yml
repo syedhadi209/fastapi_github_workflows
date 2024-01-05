@@ -3,21 +3,21 @@ name: Generate and Update OpenAPI
 on:
   pull_request:
     branches:
-      - main
+      - develop
 
 jobs:
   generate_openapi:
-    runs-on: ubuntu
+    runs-on: ubuntu-latest
 
     steps:
       - name: Checkout Repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v2
 
       - name: Set up Python 3.10
         uses: actions/setup-python@v3
         with:
-          python-version: "3.10"
-          cache: "pip"
+          python-version: “3.10”
+          cache: “pip”
 
       - name: Install Dependencies
         run: |
@@ -34,16 +34,17 @@ jobs:
           git diff --exit-code || echo "Files have changed"
 
       - name: Commit and Push Changes
-        if: steps.check_changes.outputs.return-code == '0' # Only run if there are changes
+        if: steps.check_changes.outputs.return-code == '0'
         run: |
           git config user.name "${{ github.actor }}"
           git config user.email "${{ github.actor }}@users.noreply.github.com"
+          git remote set-url origin "https://${{ secrets.PAT }}@github.com/${{ github.repository }}.git"
           git add openapi.json
           git commit -m "Update OpenAPI"
           git push
 
       - name: Comment on PR
-        if: steps.check_changes.outputs.return-code == '0' # Only run if there are changes
+        if: steps.check_changes.outputs.return-code == '0'
         uses: actions/github-script@v7
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
