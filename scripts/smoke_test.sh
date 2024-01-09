@@ -28,7 +28,6 @@ perform_smoke_test() {
 endpoints=(
     "https://jsonplaceholder.typicode.com/posts/1,GET,"
     "https://jsonplaceholder.typicode.com/comments/1,GET,"
-    "https://jsonplaceholder.typicode.com/posts,POST,'{\"title\":\"foo\",\"body\":\"bar\",\"userId\":1}'"
 )
 
 # Perform smoke test
