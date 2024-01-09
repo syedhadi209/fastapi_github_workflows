@@ -26,8 +26,15 @@ perform_smoke_test() {
 
 # List of endpoints to test (url,method,data)
 endpoints=(
-    "https://jsonplaceholder.typicode.com/posts/1,GET,"
-    "https://jsonplaceholder.typicode.com/comments/1,GET,"
+    "http://127.0.0.1:8000/get-endpoint/1,GET,"
+    "http://127.0.0.1:8000/post-endpoint,POST,'{\"item_id\": 1, \"item_data\": \"data\"}'"
+    "http://127.0.0.1:8000/patch-endpoint/1,PATCH,'{\"item_data\": \"updated_data\"}'"
+    "http://127.0.0.1:8000/put-endpoint/1,PUT,'{\"item_data\": \"replaced_data\"}'"
+    "http://127.0.0.1:8000/delete-endpoint/1,DELETE,"
+    "http://127.0.0.1:8000/,GET,"
+    "http://127.0.0.1:8000/items/2,GET,"
+    "http://127.0.0.1:8000/items/,POST,'{\"item\": {\"key\": \"value\"}}'"
+    "http://127.0.0.1:8000/items/test/test1,POST,'{\"item\": {\"key\": \"value\"}}'"
 )
 
 # Perform smoke test
