@@ -27,4 +27,4 @@ jobs:
         run: chmod +x scripts/smoke_test.sh
 
       - name: Run Smoke Test
-        run: sh scripts/smoke_test.sh
+        run: bash scripts/smoke_test.sh
