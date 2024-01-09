@@ -1,9 +1,48 @@
-from fastapi import FastAPI
-from fastapi.openapi.utils import get_openapi
-import json
+from fastapi import FastAPI,HTTPException
 
 
 app = FastAPI()
+
+data_store = {}
+
+
+@app.get("/get-endpoint/{item_id}")
+def read_item(item_id: int, query_param: str = None):
+    if item_id in data_store:
+        return {"item_id": item_id, "item_data": data_store[item_id], "query_param": query_param}
+    raise HTTPException(status_code=404, detail="Item not found")
+
+
+@app.post("/post-endpoint")
+def create_item(item_id: int, item_data: str):
+    if item_id in data_store:
+        raise HTTPException(status_code=400, detail="Item already exists")
+    data_store[item_id] = item_data
+    return {"item_id": item_id, "item_data": item_data}
+
+
+@app.patch("/patch-endpoint/{item_id}")
+def update_item(item_id: int, item_data: str):
+    if item_id not in data_store:
+        raise HTTPException(status_code=404, detail="Item not found")
+    data_store[item_id] = item_data
+    return {"item_id": item_id, "item_data": item_data}
+
+
+@app.put("/put-endpoint/{item_id}")
+def replace_item(item_id: int, item_data: str):
+    if item_id not in data_store:
+        raise HTTPException(status_code=404, detail="Item not found")
+    data_store[item_id] = item_data
+    return {"item_id": item_id, "item_data": item_data}
+
+
+@app.delete("/delete-endpoint/{item_id}")
+def delete_item(item_id: int):
+    if item_id not in data_store:
+        raise HTTPException(status_code=404, detail="Item not found")
+    del data_store[item_id]
+    return {"message": "Item deleted successfully"}
 
 @app.get("/")
 def read_root():
@@ -21,49 +60,6 @@ def create_item(item: dict):
 def create_item(item: dict):
     return {"item": item}
 
-
-# def save_openapi_to_file():
-#     openapi_content = get_openapi(title="Lazaza", version="1.0.0",routes=app.routes)
-#     with open("openapi.json", "w", encoding="utf-8") as file:
-#         json.dump(openapi_content, file, ensure_ascii=False, indent=2)
-
-def save_openapi_to_file():
-    existing_content = None
-    try:
-        with open("openapi.json", "r", encoding="utf-8") as existing_file:
-            existing_content = json.load(existing_file)
-    except FileNotFoundError:
-        pass  # File not found, no existing content
-
-    new_file_path = "openapi-new.json"
-    with open(new_file_path, "w", encoding="utf-8") as new_file:
-        openapi_content = get_openapi(title="Lazaza", version="1.0.0", routes=app.routes)
-        json.dump(openapi_content, new_file, ensure_ascii=False, indent=2)
-
-    if existing_content is not None and existing_content == openapi_content:
-        print("No changes detected. Deleting the temporary file.")
-        import os
-        os.remove(new_file_path)
-        return False
-
-    with open(new_file_path, "r", encoding="utf-8") as new_file:
-        new_content = json.load(new_file)
-        with open("openapi.json", "w", encoding="utf-8") as existing_file:
-            json.dump(new_content, existing_file, ensure_ascii=False, indent=2)
-
-    import os
-    os.remove(new_file_path)
-    
-    return True
-
-def get_openapi_status():
-    changes_detected = save_openapi_to_file()
-    print(f"Changes detected: {changes_detected}")
-    exit_code = 0 if not changes_detected else 1
-    exit(exit_code)
-
-
-get_openapi_status()
 
 
 
