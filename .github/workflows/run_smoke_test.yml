@@ -1,4 +1,4 @@
-name: Generate and Update OpenAPI
+name: Run smoke tests
 
 on:
   pull_request:
@@ -6,7 +6,7 @@ on:
       - "*"
 
 jobs:
-  generate_openapi:
+  run_smoke_test:
     runs-on: ubuntu-latest
 
     steps:
@@ -22,3 +22,9 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt  # Adjust the path if needed
+
+      - name: Make script executable
+        run: chmod +x scripts/smoke_test.sh
+
+      - name: Run Smoke Test
+        run: bash scripts/smoke_test.sh
