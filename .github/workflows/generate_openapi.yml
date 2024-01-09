@@ -24,43 +24,27 @@ jobs:
           pip install -r requirements.txt  # Adjust the path if needed
 
       - name: Run save_openapi_to_file
-        run: |
-          python -c "from src.main import save_openapi_to_file; save_openapi_to_file()"
+        id: save_openapi
+        run: python src/main.py get_openapi_status
 
-      - name: Compare OpenAPI files
-        id: compare_openapi
-        run: |
-          pr_openapi_content=$(cat openapi.json)
-          main_openapi_content=$(curl -s -H "Accept: application/vnd.github.v3.raw" "https://raw.githubusercontent.com/${{ github.repository }}/main/openapi.json")
-
-          if [ "$pr_openapi_content" == "$main_openapi_content" ]; then
-            echo "No changes detected in openapi.json"
-            echo "::set-output name=changes_detected::false"
-          else
-            echo "Changes detected in openapi.json:"
-            echo "$pr_openapi_content"  # Print PR version
-            echo "-----"
-            echo "$main_openapi_content"  # Print main branch version
-            echo "::set-output name=changes_detected::true"
-            # Perform actions based on detected changes
-          fi
-        #   # Compare the openapi.json in the main branch with the one in the pull request
-        #   if ! git diff --exit-code origin/main:openapi.json openapi.json; then
-        #     echo "Changes detected in openapi.json"
-        #     echo "::set-output name=changes_detected::true"
-        #     git diff --name-only origin/main/openapi.json origin/${GITHUB_HEAD_REF}/openapi.json
-        #   else
-        #     echo "No changes detected in openapi.json"
-        #     echo "::set-output name=changes_detected::false"
-        #   fi
-
+      #   - name: Run save_openapi_to_file
+      #     id: save_openapi
+      #     run: |
+      #       if python -c "from sripts.generate_openapi import get_openapi_status; get_openapi_status()"; then
+      #           echo "Changes detected"
+      #           exit 1
+      #       else
+      #           echo "No changes detected"
+      #           exit 0
+      #       fi
       - name: Comment PR
-        if: steps.compare_openapi.outputs.changes_detected == 'true'
-        uses: thollander/actions-comment-pull-request@v2
-        with:
-          message: |
-            Chnages detected in openapi.json
-          pr_number: ${{ github.event.number }}
+        if: steps.save_openapi.outputs.changes_detected == '1'
+        run: echo "here 1"
+        # uses: thollander/actions-comment-pull-request@v2
+        # with:
+        #   message: |
+        #     Chnages detected in openapi.json
+        #   pr_number: ${{ github.event.number }}
 
       - name: test
         run: echo "testing"
