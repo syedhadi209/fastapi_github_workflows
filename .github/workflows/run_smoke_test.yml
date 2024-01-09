@@ -23,5 +23,8 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt  # Adjust the path if needed
 
+      - name: Make script executable
+        run: chmod +x scripts/smoke_test.sh
+
       - name: Run Smoke Test
-        run: scripts/smoke_test.sh
+        run: sh scripts/smoke_test.sh
