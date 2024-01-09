@@ -8,12 +8,6 @@ on:
 jobs:
   run_smoke_test:
     runs-on: ubuntu-latest
-    services:
-      fastapi:
-        image: tiangolo/uvicorn-gunicorn-fastapi:python3.9
-        ports:
-          - 8000:80
-        options: --name fastapi-app --entrypoint /start-reload.sh --env-file <(env | grep ^FASTAPI_) --volume "${{ github.workspace }}":/app
 
     steps:
       - name: Checkout Repository
@@ -28,12 +22,6 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt  # Adjust the path if needed
-
-      - name: Run FastAPI application
-        run: uvicorn main:app --reload &
-
-      - name: Wait for FastAPI to start
-        run: sleep 5
 
       - name: Run Smoke Test
         run: scripts/smoke_test.sh
