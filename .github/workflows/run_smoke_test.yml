@@ -26,8 +26,5 @@ jobs:
       - name: Make script executable
         run: chmod +x scripts/smoke_test.sh
 
-      - name: run the server
-        run: uvicorn src.main:app --reload
-
       - name: Run Smoke Test
         run: bash scripts/smoke_test.sh
